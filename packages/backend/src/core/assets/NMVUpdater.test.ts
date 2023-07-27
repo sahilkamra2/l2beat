@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/shared'
-import { ChainId, Hash256, UnixTime, ValueType } from '@l2beat/shared-pure'
+import { ChainId, UnixTime, ValueType } from '@l2beat/shared-pure'
 import { expect, mockFn, mockObject } from 'earl'
 import { describe } from 'mocha'
 import waitForExpect from 'wait-for-expect'
@@ -69,24 +69,20 @@ describe(NMVUpdater.name, () => {
       expect(reports).toEqual(MOCK.FUTURE_REPORTS)
     })
 
-    it('throws if timestamp < minTimestamp', async () => {
+    it('skips update if timestamp < minTimestamp', async () => {
       const priceUpdater = mockObject<PriceUpdater>({
         getPricesWhenReady: mockFn(),
-      })
-      const status = mockObject<ReportStatusRepository>({
-        add: async () => Hash256.random(),
       })
       const updater = new NMVUpdater(
         priceUpdater,
         mockObject<ReportRepository>(),
-        status,
+        mockObject<ReportStatusRepository>(),
         mockObject<Clock>(),
         Logger.SILENT,
         new UnixTime(1000),
       )
-      await expect(
-        async () => await updater.update(new UnixTime(999)),
-      ).toBeRejectedWith('Timestamp cannot be smaller than minTimestamp')
+
+      await updater.update(new UnixTime(999))
 
       expect(priceUpdater.getPricesWhenReady).not.toHaveBeenCalled()
     })

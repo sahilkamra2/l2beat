@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/shared'
-import { ProjectId, UnixTime, ValueType } from '@l2beat/shared-pure'
+import { ProjectId, UnixTime } from '@l2beat/shared-pure'
 import { expect } from 'earl'
 
 import { setupDatabaseTestSuite } from '../../test/database'
@@ -111,22 +111,22 @@ describe(AggregatedReportRepository.name, () => {
         fakeAggregateReport({
           projectId: ProjectId('1'),
           timestamp: TIME_1,
-          usdValue: 1n,
+          tvlUsd: 1n,
         }),
         fakeAggregateReport({
           projectId: ProjectId('2'),
           timestamp: TIME_1,
-          usdValue: 2n,
+          tvlUsd: 2n,
         }),
         fakeAggregateReport({
           projectId: ProjectId('3'),
           timestamp: TIME_1,
-          usdValue: 3n,
+          tvlUsd: 3n,
         }),
         fakeAggregateReport({
           projectId: ProjectId('4'),
           timestamp: TIME_1,
-          usdValue: 4n,
+          tvlUsd: 4n,
         }),
       ]
       await repository.addOrUpdateMany(REPORTS.slice(0, 2))
@@ -198,9 +198,8 @@ function fakeAggregateReport(
   return {
     timestamp: UnixTime.now(),
     projectId: ProjectId('fake-project'),
-    usdValue: 1234n,
-    ethValue: 1234n,
-    valueType: ValueType.TVL,
+    tvlUsd: 1234n,
+    tvlEth: 1234n,
     ...report,
   }
 }

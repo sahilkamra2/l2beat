@@ -26,10 +26,7 @@ export function ReportBannerWithButton() {
           Read now
         </a>
       </div>
-      <img
-        className="h-full max-h-[420px]"
-        src="/images/announcements/multisig-report.png"
-      />
+      <img className="h-full" src="/images/announcements/multisig-report.png" />
     </div>
   )
 }

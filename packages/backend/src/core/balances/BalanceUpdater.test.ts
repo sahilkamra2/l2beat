@@ -218,20 +218,17 @@ describe(BalanceUpdater.name, () => {
       })
     })
 
-    it('throws if timestamp < minTimestamp', async () => {
+    it('skips work if timestamp < minTimestamp', async () => {
       const provider = mockObject<EthereumBalanceProvider>({
         getChainId: () => chainId,
         fetchBalances: async () => [],
       })
 
-      const status = mockObject<BalanceStatusRepository>({
-        add: async () => '',
-      })
       const balanceUpdater = new BalanceUpdater(
         provider,
         mockObject<BlockNumberUpdater>(),
         mockObject<BalanceRepository>(),
-        status,
+        mockObject<BalanceStatusRepository>(),
         mockObject<Clock>(),
         [],
         Logger.SILENT,
@@ -239,9 +236,7 @@ describe(BalanceUpdater.name, () => {
         new UnixTime(1000),
       )
 
-      await expect(
-        async () => await balanceUpdater.update(new UnixTime(999)),
-      ).toBeRejectedWith('Timestamp cannot be smaller than minTimestamp')
+      await balanceUpdater.update(new UnixTime(500))
 
       expect(provider.fetchBalances).not.toHaveBeenCalled()
     })

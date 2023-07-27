@@ -99,32 +99,33 @@ export class ReportRepository extends BaseRepository {
     return await knex('reports').delete()
   }
 
+  // TODO: filter by ChainId and ValueType
   async getDailyByProjectAndAsset(
     projectId: ProjectId,
     assetId: AssetId,
   ): Promise<ReportRecord[]> {
     const knex = await this.knex()
-    const rows = await this._getByProjectAndAssetQuery(knex, projectId, assetId)
-      .andWhereRaw(`extract(hour from unix_timestamp) = 0`)
-      // TODO refactor once we split this response by value_type
-      .whereIn('chain_id', [ChainId.ETHEREUM, ChainId.ARBITRUM])
-      .whereIn('asset_type', [ValueType.EBV, ValueType.CBV])
+    const rows = await this._getByProjectAndAssetQuery(
+      knex,
+      projectId,
+      assetId,
+    ).andWhereRaw(`extract(hour from unix_timestamp) = 0`)
 
     return rows.map(toRecord)
   }
 
+  // TODO: filter by ChainId and ValueType
   async getHourlyByProjectAndAsset(
     projectId: ProjectId,
     assetId: AssetId,
     from: UnixTime,
   ): Promise<ReportRecord[]> {
     const knex = await this.knex()
-    const rows = await this._getByProjectAndAssetQuery(knex, projectId, assetId)
-      .andWhere('unix_timestamp', '>=', from.toDate())
-      // TODO refactor once we split this response by value_type
-      .whereIn('chain_id', [ChainId.ETHEREUM, ChainId.ARBITRUM])
-      .whereIn('asset_type', [ValueType.EBV, ValueType.CBV])
-
+    const rows = await this._getByProjectAndAssetQuery(
+      knex,
+      projectId,
+      assetId,
+    ).andWhere('unix_timestamp', '>=', from.toDate())
     return rows.map(toRecord)
   }
 
@@ -138,10 +139,6 @@ export class ReportRepository extends BaseRepository {
     const rows = await this._getByProjectAndAssetQuery(knex, projectId, assetId)
       .andWhereRaw(`extract(hour from "unix_timestamp") % 6 = 0`)
       .andWhere('unix_timestamp', '>=', from.toDate())
-      // TODO refactor once we split this response by value_type
-      .whereIn('chain_id', [ChainId.ETHEREUM, ChainId.ARBITRUM])
-      .whereIn('asset_type', [ValueType.EBV, ValueType.CBV])
-
     return rows.map(toRecord)
   }
 

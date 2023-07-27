@@ -64,7 +64,12 @@ export const metis: Layer2 = {
     },
   },
   riskView: makeBridgeCompatible({
-    stateValidation: RISK_VIEW.STATE_NONE,
+    stateValidation: {
+      value: 'In development',
+      description:
+        'Currently the system permits invalid state roots. More details in project overview.',
+      sentiment: 'bad',
+    },
     dataAvailability: RISK_VIEW.DATA_EXTERNAL_MEMO,
     upgradeability: RISK_VIEW.UPGRADABLE_YES,
     sequencerFailure: {
@@ -131,7 +136,7 @@ export const metis: Layer2 = {
       ],
     },
     forceTransactions: {
-      ...FORCE_TRANSACTIONS.ENQUEUE,
+      ...FORCE_TRANSACTIONS.CANONICAL_ORDERING,
       references: [
         {
           text: 'CanonicalTransactionChain - Etherscan source code',

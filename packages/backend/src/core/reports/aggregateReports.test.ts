@@ -103,9 +103,8 @@ describe(aggregateReports.name, () => {
     return {
       timestamp: NOW,
       projectId,
-      usdValue: usdTVL * 100n,
-      ethValue: usdTVL * 1000n,
-      valueType: ValueType.TVL,
+      tvlUsd: usdTVL * 100n,
+      tvlEth: usdTVL * 1000n,
     }
   }
 })

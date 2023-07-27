@@ -1,4 +1,4 @@
-import { ProjectId, UnixTime, ValueType } from '@l2beat/shared-pure'
+import { ProjectId, UnixTime } from '@l2beat/shared-pure'
 
 import { AggregatedReportRecord } from '../../peripherals/database/AggregatedReportRepository'
 import { ReportRecord } from '../../peripherals/database/ReportRepository'
@@ -46,36 +46,33 @@ export function aggregateReportsWithCategories(
   const categorized = categories.map(({ projectId }) => ({
     timestamp,
     projectId,
-    ethValue: 0n,
-    usdValue: 0n,
-    valueType: ValueType.TVL,
+    tvlEth: 0n,
+    tvlUsd: 0n,
   }))
-
   const aggregatedReports: AggregatedReportRecord[] = []
 
   for (const project of projects) {
     const filteredReports = reports.filter(
       (x) => x.projectId === project.projectId,
     )
-    const { ethValue, usdValue } = filteredReports.reduce(
+    const { tvlEth, tvlUsd } = filteredReports.reduce(
       (acc, next) => ({
-        usdValue: acc.usdValue + next.usdValue,
-        ethValue: acc.ethValue + next.ethValue,
+        tvlUsd: acc.tvlUsd + next.usdValue,
+        tvlEth: acc.tvlEth + next.ethValue,
       }),
-      { usdValue: 0n, ethValue: 0n },
+      { tvlUsd: 0n, tvlEth: 0n },
     )
     for (const [i, { check }] of categories.entries()) {
       if (check(project)) {
-        categorized[i].ethValue += ethValue
-        categorized[i].usdValue += usdValue
+        categorized[i].tvlEth += tvlEth
+        categorized[i].tvlUsd += tvlUsd
       }
     }
     aggregatedReports.push({
-      projectId: project.projectId,
-      valueType: ValueType.TVL,
       timestamp,
-      ethValue,
-      usdValue,
+      projectId: project.projectId,
+      tvlEth,
+      tvlUsd,
     })
   }
 

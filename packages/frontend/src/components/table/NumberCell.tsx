@@ -7,19 +7,11 @@ export interface NumberCellProps {
   signed?: boolean
   children: ReactNode
   className?: string
-  tooltip?: string
 }
 
 export function NumberCell(props: NumberCellProps) {
   return (
-    <span
-      className={cx(
-        props.tooltip ? 'Tooltip' : '',
-        'text-base md:text-lg',
-        props.className,
-      )}
-      title={props.tooltip}
-    >
+    <span className={cx('text-base md:text-lg', props.className)}>
       {props.signed && typeof props.children === 'string' ? (
         <PercentChange value={props.children} />
       ) : (

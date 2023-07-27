@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/shared'
-import { ChainId, Hash256, UnixTime, ValueType } from '@l2beat/shared-pure'
+import { ChainId, UnixTime, ValueType } from '@l2beat/shared-pure'
 import { expect, mockFn, mockObject } from 'earl'
 import waitForExpect from 'wait-for-expect'
 
@@ -90,7 +90,7 @@ describe(ArbitrumEBVUpdater.name, () => {
       expect(reports).toEqual(MOCK.FUTURE_REPORTS)
     })
 
-    it('throws if timestamp < minTimestamp', async () => {
+    it('skips update if timestamp < minTimestamp', async () => {
       const priceUpdater = mockObject<PriceUpdater>({
         getPricesWhenReady: mockFn(),
       })
@@ -100,15 +100,12 @@ describe(ArbitrumEBVUpdater.name, () => {
       const suppliesUpdater = mockObject<TotalSupplyUpdater>({
         getTotalSuppliesWhenReady: mockFn(),
       })
-      const status = mockObject<ReportStatusRepository>({
-        add: async () => Hash256.random(),
-      })
       const updater = new ArbitrumEBVUpdater(
         priceUpdater,
         balanceUpdater,
         suppliesUpdater,
         mockObject<ReportRepository>(),
-        status,
+        mockObject<ReportStatusRepository>(),
         mockObject<Clock>(),
         [MOCK.PROJECT],
         MOCK.TOKENS,
@@ -116,9 +113,7 @@ describe(ArbitrumEBVUpdater.name, () => {
         new UnixTime(1000),
       )
 
-      await expect(
-        async () => await updater.update(new UnixTime(999)),
-      ).toBeRejectedWith('Timestamp cannot be smaller than minTimestamp')
+      await updater.update(new UnixTime(999))
 
       expect(priceUpdater.getPricesWhenReady).not.toHaveBeenCalled()
       expect(balanceUpdater.getBalancesWhenReady).not.toHaveBeenCalled()

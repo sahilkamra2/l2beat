@@ -223,20 +223,17 @@ describe(TotalSupplyUpdater.name, () => {
       })
     })
 
-    it('throws if timestamp < minTimestamp', async () => {
+    it('skips if timestamp < minTimestamp', async () => {
       const provider = mockObject<TotalSupplyProvider>({
         getChainId: () => chainId,
         getTotalSupplies: async () => [],
       })
 
-      const status = mockObject<TotalSupplyStatusRepository>({
-        add: async () => '',
-      })
       const updater = new TotalSupplyUpdater(
         provider,
         mockObject<BlockNumberUpdater>(),
         mockObject<TotalSupplyRepository>(),
-        status,
+        mockObject<TotalSupplyStatusRepository>(),
         mockObject<Clock>(),
         [],
         Logger.SILENT,
@@ -244,9 +241,7 @@ describe(TotalSupplyUpdater.name, () => {
         new UnixTime(1000),
       )
 
-      await expect(
-        async () => await updater.update(new UnixTime(999)),
-      ).toBeRejectedWith('Timestamp cannot be smaller than minTimestamp')
+      await updater.update(new UnixTime(999))
 
       expect(provider.getTotalSupplies).not.toHaveBeenCalled()
     })

@@ -60,7 +60,6 @@ function getScalingTvlViewEntry(
     showProjectUnderReview: isAnySectionUnderReview(project),
     isUpcoming: project.isUpcoming,
     tvl: stats && escrowsConfigured(project) ? formatUSD(stats.tvl) : undefined,
-    tvlTooltip: project.config.tvlTooltip,
     tvlBreakdown:
       stats && escrowsConfigured(project) ? stats.tvlBreakdown : undefined,
     oneDayChange:

@@ -1,4 +1,4 @@
-import { ChainId, ContractValue, EthereumAddress } from '@l2beat/shared-pure'
+import { ContractValue, EthereumAddress } from '@l2beat/shared-pure'
 import chalk from 'chalk'
 import { execSync } from 'child_process'
 import { constants, utils } from 'ethers'
@@ -22,10 +22,9 @@ export async function runInversion(
   project: string,
   configReader: ConfigReader,
   useMermaidMarkup: boolean,
-  chain: ChainId,
 ) {
   const addresses = new Map<string, AddressDetails>()
-  const projectDiscovery = await configReader.readDiscovery(project, chain)
+  const projectDiscovery = await configReader.readDiscovery(project)
 
   function add(address: ContractValue, role?: Role) {
     if (
@@ -115,7 +114,7 @@ export async function runInversion(
       </body>
     </html>`
 
-    const root = `discovery/${project}/${chain.toString()}`
+    const root = `discovery/${project}`
     const htmlFilePath = `${root}/mermaid/index.html`
     await mkdir(`${root}/mermaid`, { recursive: true })
     await writeFile(htmlFilePath, mermaidPage)

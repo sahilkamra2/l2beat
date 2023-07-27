@@ -57,7 +57,7 @@ function configureTabsNavigation(tabNavigation: HTMLElement) {
   tabs.forEach((tab) => {
     tab.addEventListener('click', (e) => {
       e.preventDefault()
-      history.replaceState({}, '', tab.href)
+      history.pushState({}, '', tab.href)
       onTabClick(tab.id)
     })
   })
